@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NovaCalc Pro — Free Online Scientific Calculator</title>
+<meta name="description" content="NovaCalc Pro is a fast, free online scientific calculator with DEG/RAD modes, trigonometry, logarithms, powers, factorials, memory, history, undo/redo, and dark/light mode.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://YOURUSERNAME.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NovaCalc Pro — Free Online Scientific Calculator">
+<meta property="og:description" content="Fast, free scientific calculator for everyday and advanced calculations.">
+<meta property="og:url" content="https://YOURUSERNAME.github.io/">
+<meta name="twitter:card" content="summary">
+
+<style>
+:root{
+  --bg:#070a12;--panel:rgba(255,255,255,.075);--panel2:rgba(255,255,255,.11);
+  --text:#f8fafc;--muted:#9aa6bd;--gold1:#8d6500;--gold2:#ffd76a;--gold3:#fff1a8;
+  --accent:#6c63ff;--accent2:#9b5cff;--green:#19c37d;--danger:#ff5570;
+  --border:rgba(255,255,255,.14);--shadow:0 28px 80px rgba(0,0,0,.42);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Inter,system-ui,Arial,sans-serif
+}
+
+body{
+  min-height:100vh;
+  padding:18px;
+  color:var(--text);
+  background:
+  radial-gradient(circle at 12% 15%,#253b78 0,transparent 32%),
+  radial-gradient(circle at 88% 85%,#57266d 0,transparent 32%),
+  var(--bg);
+  transition:.35s
+}
+
+body.light{
+  --bg:#f3f6ff;
+  --panel:rgba(255,255,255,.62);
+  --panel2:rgba(255,255,255,.85);
+  --text:#172033;
+  --muted:#667085;
+  --border:rgba(0,0,0,.09);
+  --shadow:0 25px 65px rgba(45,55,90,.16);
+  background:
+  radial-gradient(circle at 15% 15%,#dce8ff 0,transparent 32%),
+  radial-gradient(circle at 85% 85%,#f0dcff 0,transparent 32%),
+  var(--bg)
+}
+
+button,input{font:inherit}
+
+button{
+  border:0;
+  cursor:pointer;
+  color:inherit
+}
+
+.app{
+  width:min(1180px,100%);
+  margin:auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 350px;
+  gap:18px
+}
+
+.card{
+  border:1px solid var(--border);
+  background:var(--panel);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-radius:28px;
+  box-shadow:var(--shadow)
+}
+
+.calculator{padding:20px}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px
+}
+
+.logo{
+  font-size:23px;
+  font-weight:850
+}
+
+.logo span{opacity:.5}
+
+.top-buttons{
+  display:flex;
+  gap:7px
+}
+
+.icon-btn,.small-btn{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:9px 11px
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  font-size:17px
+}
+
+.icon-btn:hover,.small-btn:hover{
+  filter:brightness(1.15)
+}
+
+.display{
+  min-height:172px;
+  padding:20px;
+  border-radius:22px;
+  background:rgba(0,0,0,.19);
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  overflow:hidden
+}
+
+body.light .display{
+  background:rgba(255,255,255,.55)
+}
+
+.expression{
+  min-height:30px;
+  color:var(--muted);
+  font-size:18px;
+  text-align:right;
+  word-break:break-all
+}
+
+.preview{
+  min-height:22px;
+  color:#b7c1d8;
+  font-size:14px;
+  text-align:right;
+  margin-top:5px
+}
+
+.result{
+  font-size:43px;
+  font-weight:850;
+  text-align:right;
+  margin-top:5px;
+  overflow-x:auto;
+  white-space:nowrap
+}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:12px 0
+}
+
+.pill{
+  padding:8px 12px;
+  border-radius:11px;
+  background:var(--panel2);
+  border:1px solid var(--border)
+}
+
+.pill.active{
+  background:var(--accent);
+  color:white
+}
+
+.memory{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:7px;
+  margin-bottom:9px
+}
+
+.memory button,.keypad button{
+  border:1px solid var(--border);
+  transition:transform .1s,filter .15s,box-shadow .15s
+}
+
+.memory button{
+  height:40px;
+  border-radius:12px;
+  background:var(--panel2)
+}
+
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px
+}
+
+.keypad button{
+  height:58px;
+  border-radius:15px;
+  background:rgba(255,255,255,.085);
+  font-size:18px;
+  font-weight:700
+}
+
+body.light .keypad button,
+body.light .memory button{
+  background:rgba(0,0,0,.055)
+}
+
+.keypad button:hover,
+.memory button:hover{
+  filter:brightness(1.15);
+  transform:translateY(-1px)
+}
+
+.keypad button:active,
+.memory button:active{
+  transform:scale(.94);
+  box-shadow:0 0 0 4px rgba(255,255,255,.06)
+}
+
+.number{
+  background:
+  linear-gradient(145deg,rgba(255,215,106,.24),rgba(141,101,0,.24))!important
+}
+
+.operator{
+  background:
+  linear-gradient(145deg,rgba(108,99,255,.32),rgba(155,92,255,.18))!important
+}
+
+.equal{
+  background:
+  linear-gradient(135deg,#19a86f,#19c37d)!important;
+  color:#fff!important;
+  box-shadow:0 0 22px rgba(25,195,125,.28)
+}
+
+.ans-key{
+  background:
+  linear-gradient(145deg,rgba(255,215,106,.30),rgba(108,99,255,.25))!important;
+  color:#ffe79a!important
+}
+
+.danger{
+  background:rgba(255,85,112,.18)!important
+}
+
+.function{
+  color:#d5d9ff!important
+}
+
+.hidden{display:none!important}
+
+.status{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:11px
+}
+
+.history{
+  padding:18px;
+  min-height:620px
+}
+
+.history-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px
+}
+
+.history-head h2{
+  font-size:20px
+}
+
+.search{
+  width:100%;
+  padding:11px 13px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  outline:none;
+  background:var(--panel2);
+  color:inherit;
+  margin-bottom:10px
+}
+
+.history-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:540px;
+  overflow:auto
+}
+
+.history-item{
+  padding:11px;
+  border-radius:14px;
+  background:var(--panel2);
+  border:1px solid transparent;
+  cursor:pointer
+}
+
+.history-item:hover{
+  border-color:var(--border)
+}
+
+.history-expression{
+  color:var(--muted);
+  font-size:13px;
+  word-break:break-all
+}
+
+.history-result{
+  font-size:17px;
+  font-weight:750;
+  margin-top:3px
+}
+
+.history-actions{
+  display:flex;
+  gap:5px;
+  margin-top:7px
+}
+
+.history-actions button{
+  padding:5px 7px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08)
+}
+
+.pin{color:#ffd76a}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:40px 5px
+}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .history{min-height:auto}
+  .history-list{max-height:320px}
+}
+
+@media(max-width:520px){
+  body{padding:7px}
+  .calculator,.history{
+    padding:13px;
+    border-radius:20px
+  }
+  .result{font-size:34px}
+  .keypad{gap:5px}
+  .keypad button{
+    height:52px;
+    font-size:15px;
+    border-radius:12px
+  }
+  .memory{gap:4px}
+  .memory button{
+    font-size:11px;
+    padding:0
+  }
+  .display{
+    min-height:145px;
+    padding:16px
+  }
+}
+
+.seo-content{
+  width:min(1180px,100%);
+  margin:18px auto 0;
+  padding:22px;
+}
+.seo-content h2{
+  font-size:22px;
+  margin-bottom:9px;
+}
+.seo-content p{
+  color:var(--muted);
+  line-height:1.65;
+  max-width:900px;
+}
+
+.site-nav{width:min(1180px,100%);margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap}
+.site-nav a{color:inherit;text-decoration:none;padding:8px 12px;border:1px solid var(--border);background:var(--panel);border-radius:11px;font-size:13px}
+.site-nav a:hover{filter:brightness(1.12)}
+.site-footer{width:min(1180px,100%);margin:18px auto 0;padding:18px;text-align:center;color:var(--muted);font-size:13px}
+.site-footer a{color:inherit}
+
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "NovaCalc Pro",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "description": "Free online scientific calculator with trigonometry, logarithms, powers, factorials, memory and calculation history.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+
+<body>
+<nav class="site-nav" aria-label="Site navigation">
+  <a href="./">Calculator</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+  <a href="privacy-policy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+</nav>
+
+<main class="app" aria-label="NovaCalc Pro scientific calculator">
+
+<section class="calculator card">
+
+  <div class="topbar">
+    <div class="logo">Nova<span>Calc</span> ⚡</div>
+
+    <div class="top-buttons">
+      <button class="icon-btn" id="undoBtn" title="Undo">↶</button>
+      <button class="icon-btn" id="redoBtn" title="Redo">↷</button>
+      <button class="icon-btn" id="copyBtn" title="Copy result">📋</button>
+      <button class="icon-btn" id="themeBtn" title="Dark / Light">🌙</button>
+    </div>
+  </div>
+
+  <div class="display">
+    <div class="expression" id="expression">Ready</div>
+    <div class="preview" id="preview"></div>
+    <div class="result" id="result">0</div>
+  </div>
+
+  <div class="toolbar">
+    <button class="pill active" id="degBtn">DEG</button>
+    <button class="pill" id="radBtn">RAD</button>
+    <button class="pill" id="sciBtn">🔬 Scientific</button>
+    <button class="pill" id="copySmall">Copy</button>
+  </div>
+
+  <div class="memory">
+    <button onclick="memoryClear()">MC</button>
+    <button onclick="memoryRecall()">MR</button>
+    <button onclick="memoryAdd()">M+</button>
+    <button onclick="memorySubtract()">M−</button>
+    <button onclick="memoryStore()">MS</button>
+    <button onclick="clearAll()">AC</button>
+  </div>
+
+  <div class="keypad">
+
+    <button class="danger" onclick="clearAll()">C</button>
+    <button onclick="backspace()">⌫</button>
+    <button onclick="append('(')">(</button>
+    <button onclick="append(')')">)</button>
+    <button class="operator" onclick="append('/')">÷</button>
+
+    <button class="function scientificOnly" onclick="scientific('sin')">sin</button>
+    <button class="function scientificOnly" onclick="scientific('cos')">cos</button>
+    <button class="function scientificOnly" onclick="scientific('tan')">tan</button>
+    <button class="function scientificOnly" onclick="scientific('sqrt')">√</button>
+    <button class="operator" onclick="append('*')">×</button>
+
+    <button class="function scientificOnly" onclick="scientific('log')">log</button>
+    <button class="function scientificOnly" onclick="scientific('ln')">ln</button>
+    <button class="function scientificOnly" onclick="scientific('square')">x²</button>
+    <button class="function scientificOnly" onclick="append('^')">xʸ</button>
+    <button class="operator" onclick="append('-')">−</button>
+
+    <button class="number" onclick="append('7')">7</button>
+    <button class="number" onclick="append('8')">8</button>
+    <button class="number" onclick="append('9')">9</button>
+    <button class="function scientificOnly" onclick="scientific('percent')">%</button>
+    <button class="operator" onclick="append('+')">+</button>
+
+    <button class="number" onclick="append('4')">4</button>
+    <button class="number" onclick="append('5')">5</button>
+    <button class="number" onclick="append('6')">6</button>
+    <button class="function scientificOnly" onclick="scientific('factorial')">n!</button>
+    <button class="operator" onclick="append('.')">.</button>
+
+    <button class="number" onclick="append('1')">1</button>
+    <button class="number" onclick="append('2')">2</button>
+    <button class="number" onclick="append('3')">3</button>
+    <button class="function scientificOnly" onclick="append('Math.E')">e</button>
+    <button class="equal" onclick="calculate()">=</button>
+
+    <button class="number" onclick="append('0')" style="grid-column:span 2">0</button>
+    <button class="function scientificOnly" onclick="append('Math.PI')">π</button>
+    <button class="function scientificOnly" onclick="scientific('inverse')">1/x</button>
+
+    <!-- FIXED ANS BUTTON -->
+    <button class="function ans-key" onclick="useAns()">Ans</button>
+
+  </div>
+
+  <div class="status" id="status">
+    Keyboard ready • Memory: 0 • Auto-save ON
+  </div>
+
+</section>
+
+<section class="history card">
+
+  <div class="history-head">
+    <h2>📜 History</h2>
+    <button class="small-btn" onclick="clearHistory()">Clear</button>
+  </div>
+
+  <input
+    class="search"
+    id="historySearch"
+    placeholder="Search history..."
+  >
+
+  <div class="history-list" id="historyList">
+    <div class="empty">No calculations yet</div>
+  </div>
+
+</section>
+
+</div>
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+let current = "";
+let memory = 0;
+
+let angleMode =
+  localStorage.getItem("novaAngle") || "DEG";
+
+let history =
+  JSON.parse(localStorage.getItem("novaHistory") || "[]");
+
+let lastAnswer =
+  localStorage.getItem("novaAns") || "0";
+
+let undoStack = [];
+let redoStack = [];
+
+let scientificMode = true;
+
+/*
+  IMPORTANT:
+  Ye flag batata hai ke last action "=" tha.
+  Isse Ans aur normal number entry proper calculator
+  ki tarah behave karegi.
+*/
+let justCalculated = false;
+
+
+/* =========================
+   NUMBER FORMATTING
+========================= */
+
+function formatNumber(n){
+
+  if(!Number.isFinite(n))
+    throw new Error("Invalid");
+
+  if(Math.abs(n) < 1e-12)
+    n = 0;
+
+  if(
+    Math.abs(n) >= 1e15 ||
+    (Math.abs(n) > 0 && Math.abs(n) < 1e-9)
+  ){
+    return n.toPrecision(10);
+  }
+
+  let s = Number(n.toPrecision(12)).toString();
+
+  if(s.includes("e"))
+    return s;
+
+  let [a,b] = s.split(".");
+
+  const sign =
+    a.startsWith("-") ? "-" : "";
+
+  const raw =
+    sign ? a.slice(1) : a;
+
+  a = raw.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ","
+  );
+
+  return sign + a + (b ? "." + b : "");
+}
+
+
+function rawNumber(s){
+  return Number(
+    String(s).replaceAll(",","")
+  );
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function save(){
+
+  localStorage.setItem(
+    "novaHistory",
+    JSON.stringify(history)
+  );
+
+  localStorage.setItem(
+    "novaAns",
+    String(lastAnswer)
+  );
+
+  localStorage.setItem(
+    "novaAngle",
+    angleMode
+  );
+}
+
+
+/* =========================
+   UNDO / REDO
+========================= */
+
+function snapshot(){
+
+  undoStack.push(current);
+
+  if(undoStack.length > 50)
+    undoStack.shift();
+
+  redoStack = [];
+}
+
+
+/* =========================
+   DISPLAY
+========================= */
+
+function updateDisplay(){
+
+  $("expression").textContent =
+    current || "Ready";
+
+  updatePreview();
+  updateStatus();
+}
+
+
+function updatePreview(){
+
+  if(!current){
+    $("preview").textContent = "";
+    return;
+  }
+
+  try{
+
+    $("preview").textContent =
+      "≈ " + formatNumber(
+        evaluate(current)
+      );
+
+  }catch{
+
+    $("preview").textContent = "";
+  }
+}
+
+
+/* =========================
+   APPEND
+   FIXED CALCULATOR BEHAVIOR
+========================= */
+
+function append(v){
+
+  snapshot();
+
+  /*
+    Agar previous action "=" tha:
+
+    Number press karne par new calculation start.
+    Operator press karne par previous result continue.
+  */
+
+  if(justCalculated){
+
+    const isOperator =
+      ["+","-","*","/","^"].includes(v);
+
+    if(!isOperator){
+
+      current = "";
+    }
+
+    justCalculated = false;
+  }
+
+  if(current === "Error")
+    current = "";
+
+  // Prevent repeated decimal points in the current number.
+  if (v === "." && /(?:^|[+\-*/^(])(?:\d*\.\d*)$/.test(current)) {
+    return;
+  }
+
+  // Prevent two binary operators in a row (except a leading minus).
+  if (
+    ["+","*","/","^"].includes(v) &&
+    /[+*/^]$/.test(current)
+  ) {
+    current = current.slice(0, -1) + v;
+  } else {
+    current += v;
+  }
+
+  updateDisplay();
+}
+
+
+/* =========================
+   FIXED ANS
+========================= */
+
+function useAns(){
+
+  snapshot();
+
+  const ans =
+    String(lastAnswer);
+
+  /*
+    Agar koi expression nahi hai:
+    Ans = previous answer
+  */
+
+  if(!current){
+
+    current = ans;
+
+  }
+
+  /*
+    Agar previous calculation complete ho chuki hai:
+    Ans ko duplicate nahi karna.
+    
+    Example:
+    2+2 = 4
+    Ans   = 4
+  */
+
+  else if(justCalculated){
+
+    current = ans;
+    justCalculated = false;
+
+  }
+
+  /*
+    Agar expression operator par end ho:
+    
+    2+
+    Ans
+    
+    => 2+4
+  */
+
+  else if(/[+\-*/^(]$/.test(current)){
+
+    current += ans;
+
+  }
+
+  /*
+    Agar current expression mein already number hai
+    aur calculation active hai, Ans ko new value
+    samjho. Isse 2+24 jaisa issue nahi hoga.
+  */
+
+  else{
+
+    current = ans;
+
+  }
+
+  $("result").textContent =
+    formatNumber(rawNumber(ans));
+
+  updateDisplay();
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+function clearAll(){
+
+  snapshot();
+
+  current = "";
+
+  justCalculated = false;
+
+  $("result").textContent = "0";
+  $("expression").textContent = "Ready";
+  $("preview").textContent = "";
+
+  updateStatus();
+}
+
+
+/* =========================
+   BACKSPACE
+========================= */
+
+function backspace(){
+
+  if(!current)
+    return;
+
+  snapshot();
+
+  current = current.slice(0,-1);
+
+  justCalculated = false;
+
+  updateDisplay();
+}
+
+
+/* =========================
+   SANITIZE / EVALUATE
+========================= */
+
+function sanitize(expr){
+
+  expr = expr
+    .replaceAll(",","")
+    .replaceAll("Math.PI",String(Math.PI))
+    .replaceAll("Math.E",String(Math.E))
+    .replace(/\^/g,"**");
+
+  // JavaScript strict mode rejects legacy octal-style numbers such as 02.
+  // Normalize leading zeros so calculator input like 02*10 evaluates to 20.
+  expr = expr.replace(
+    /(^|[+\-*/^(])0+(?=\d)/g,
+    "$1"
+  );
+
+  if(
+    !/^[0-9eE+\-*/().\s]+$/.test(expr)
+  ){
+    throw new Error("Invalid characters");
+  }
+
+  return expr;
+}
+
+
+function evaluate(expr){
+
+  return Function(
+    '"use strict";return (' +
+    sanitize(expr) +
+    ')'
+  )();
+}
+
+
+/* =========================
+   CALCULATE
+   FIXED
+========================= */
+
+function calculate(){
+
+  if(!current)
+    return;
+
+  try{
+
+    const original = current;
+
+    const numericAnswer =
+      evaluate(current);
+
+    const answer =
+      formatNumber(numericAnswer);
+
+    $("result").textContent =
+      answer;
+
+    $("expression").textContent =
+      original + " =";
+
+    /*
+      Current mein actual numeric value rakho,
+      formatted commas wala text nahi.
+    */
+
+    current =
+      String(numericAnswer);
+
+    /*
+      Previous answer save karo.
+    */
+
+    lastAnswer =
+      String(numericAnswer);
+
+    /*
+      Ab calculator ko pata hai ke "=" press hua tha.
+    */
+
+    justCalculated = true;
+
+    addHistory(
+      original,
+      answer
+    );
+
+    save();
+
+    $("preview").textContent = "";
+
+    updateStatus();
+
+  }catch{
+
+    $("result").textContent = "Error";
+
+    $("expression").textContent =
+      "Invalid expression";
+
+    $("preview").textContent = "";
+
+    justCalculated = false;
+  }
+}
+
+
+/* =========================
+   SCIENTIFIC
+========================= */
+
+function scientific(type){
+
+  if(!current)
+    return;
+
+  try{
+
+    const value =
+      evaluate(current);
+
+    const r =
+      angleMode === "DEG"
+      ? value * Math.PI / 180
+      : value;
+
+    let answer;
+
+    switch(type){
+
+      case "sin":
+        answer = Math.sin(r);
+        break;
+
+      case "cos":
+        answer = Math.cos(r);
+        break;
+
+      case "tan":
+        answer = Math.tan(r);
+        break;
+
+      case "sqrt":
+        answer = Math.sqrt(value);
+        break;
+
+      case "log":
+        answer = Math.log10(value);
+        break;
+
+      case "ln":
+        answer = Math.log(value);
+        break;
+
+      case "square":
+        answer = value ** 2;
+        break;
+
+      case "percent":
+        answer = value / 100;
+        break;
+
+      case "inverse":
+        answer = 1 / value;
+        break;
+
+      case "factorial":
+        answer = factorial(value);
+        break;
+    }
+
+    const formatted =
+      formatNumber(answer);
+
+    const original =
+      type + "(" + current + ")";
+
+    snapshot();
+
+    $("result").textContent =
+      formatted;
+
+    $("expression").textContent =
+      original + " =";
+
+    current =
+      String(answer);
+
+    lastAnswer =
+      String(answer);
+
+    justCalculated = true;
+
+    addHistory(
+      original,
+      formatted
+    );
+
+    save();
+
+    $("preview").textContent = "";
+
+    updateStatus();
+
+  }catch{
+
+    $("result").textContent =
+      "Error";
+
+    $("expression").textContent =
+      "Invalid operation";
+
+    $("preview").textContent = "";
+  }
+}
+
+
+/* =========================
+   FACTORIAL
+========================= */
+
+function factorial(n){
+
+  if(
+    n < 0 ||
+    !Number.isInteger(n) ||
+    n > 170
+  ){
+    throw new Error();
+  }
+
+  let r = 1;
+
+  for(
+    let i = 2;
+    i <= n;
+    i++
+  ){
+    r *= i;
+  }
+
+  return r;
+}
+
+
+/* =========================
+   SIGN
+========================= */
+
+function toggleSign(){
+
+  if(!current)
+    return;
+
+  snapshot();
+
+  try{
+
+    current =
+      String(-evaluate(current));
+
+  }catch{
+
+    current =
+      "-(" + current + ")";
+  }
+
+  justCalculated = false;
+
+  updateDisplay();
+}
+
+
+/* =========================
+   MEMORY
+========================= */
+
+function memoryClear(){
+
+  memory = 0;
+
+  updateStatus();
+}
+
+
+function memoryRecall(){
+
+  snapshot();
+
+  if(justCalculated){
+
+    current = String(memory);
+    justCalculated = false;
+
+  }else{
+
+    append(String(memory));
+
+  }
+
+  updateDisplay();
+}
+
+
+function memoryAdd(){
+
+  try{
+
+    memory += evaluate(current);
+
+    updateStatus();
+
+  }catch{}
+}
+
+
+function memorySubtract(){
+
+  try{
+
+    memory -= evaluate(current);
+
+    updateStatus();
+
+  }catch{}
+}
+
+
+function memoryStore(){
+
+  try{
+
+    memory =
+      evaluate(current);
+
+    updateStatus();
+
+  }catch{}
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+function updateStatus(){
+
+  $("status").textContent =
+    "Keyboard ready • Memory: " +
+    formatNumber(memory) +
+    " • Auto-save ON";
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function addHistory(exp,res){
+
+  history.unshift({
+
+    expression:exp,
+    result:res,
+    pinned:false,
+    time:Date.now()
+
+  });
+
+  if(history.length > 100)
+    history.pop();
+
+  renderHistory();
+}
+
+
+function renderHistory(){
+
+  const q =
+    $("historySearch").value
+      .trim()
+      .toLowerCase();
+
+  const list =
+    history.filter(x =>
+      (x.expression + " " + x.result)
+      .toLowerCase()
+      .includes(q)
+    );
+
+  if(!list.length){
+
+    $("historyList").innerHTML =
+      '<div class="empty">No matching calculations</div>';
+
+    return;
+  }
+
+  $("historyList").innerHTML = "";
+
+  list.forEach(item => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "history-item";
+
+    div.innerHTML =
+      '<div class="history-expression"></div>' +
+      '<div class="history-result"></div>' +
+      '<div class="history-actions"></div>';
+
+    div.querySelector(
+      ".history-expression"
+    ).textContent =
+      item.expression;
+
+    div.querySelector(
+      ".history-result"
+    ).textContent =
+      "= " + item.result;
+
+    const actions =
+      div.querySelector(".history-actions");
+
+
+    const use =
+      document.createElement("button");
+
+    use.textContent = "Use";
+
+    use.onclick = e => {
+
+      e.stopPropagation();
+
+      current =
+        String(item.result)
+        .replaceAll(",","");
+
+      $("result").textContent =
+        item.result;
+
+      justCalculated = true;
+
+      updateDisplay();
+    };
+
+
+    const pin =
+      document.createElement("button");
+
+    pin.textContent =
+      item.pinned ? "📌" : "📍";
+
+    pin.className =
+      item.pinned ? "pin" : "";
+
+    pin.onclick = e => {
+
+      e.stopPropagation();
+
+      item.pinned =
+        !item.pinned;
+
+      save();
+      renderHistory();
+    };
+
+
+    const del =
+      document.createElement("button");
+
+    del.textContent =
+      "Delete";
+
+    del.onclick = e => {
+
+      e.stopPropagation();
+
+      history =
+        history.filter(
+          h => h !== item
+        );
+
+      save();
+      renderHistory();
+    };
+
+
+    actions.append(
+      use,
+      pin,
+      del
+    );
+
+
+    div.onclick = () => {
+
+      current =
+        String(item.result)
+        .replaceAll(",","");
+
+      $("result").textContent =
+        item.result;
+
+      justCalculated = true;
+
+      updateDisplay();
+    };
+
+
+    $("historyList")
+      .appendChild(div);
+
+  });
+
+  save();
+}
+
+
+function clearHistory(){
+
+  history = [];
+
+  save();
+
+  renderHistory();
+}
+
+
+/* =========================
+   COPY
+========================= */
+
+async function copyResult(){
+
+  const text = $("result").textContent;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+
+    const b = $("copyBtn");
+    const old = b.textContent;
+    b.textContent = "✓";
+    setTimeout(() => b.textContent = old, 900);
+
+  } catch {
+    $("status").textContent = "Copy failed • Select the result manually";
+    setTimeout(updateStatus, 1600);
+  }
+}
+
+
+/* =========================
+   ANGLE
+========================= */
+
+function setAngle(mode){
+
+  angleMode = mode;
+
+  $("degBtn")
+    .classList.toggle(
+      "active",
+      mode === "DEG"
+    );
+
+  $("radBtn")
+    .classList.toggle(
+      "active",
+      mode === "RAD"
+    );
+
+  save();
+
+  updateStatus();
+}
+
+
+$("degBtn").onclick =
+  () => setAngle("DEG");
+
+$("radBtn").onclick =
+  () => setAngle("RAD");
+
+
+/* =========================
+   BUTTON EVENTS
+========================= */
+
+$("copyBtn").onclick =
+  copyResult;
+
+$("copySmall").onclick =
+  copyResult;
+
+
+$("themeBtn").onclick = () => {
+
+  document.body
+    .classList
+    .toggle("light");
+
+  const l =
+    document.body.classList
+      .contains("light");
+
+  $("themeBtn").textContent =
+    l ? "☀️" : "🌙";
+
+  localStorage.setItem(
+    "novaTheme",
+    l ? "light" : "dark"
+  );
+};
+
+
+$("sciBtn").onclick = () => {
+
+  scientificMode =
+    !scientificMode;
+
+  $("sciBtn")
+    .classList
+    .toggle(
+      "active",
+      scientificMode
+    );
+
+  document
+    .querySelectorAll(".scientificOnly")
+    .forEach(x =>
+      x.classList.toggle(
+        "hidden",
+        !scientificMode
+      )
+    );
+};
+
+
+$("historySearch").oninput =
+  renderHistory;
+
+
+/* =========================
+   UNDO
+========================= */
+
+$("undoBtn").onclick = () => {
+
+  if(!undoStack.length)
+    return;
+
+  redoStack.push(current);
+
+  current =
+    undoStack.pop() || "";
+
+  justCalculated = false;
+
+  updateDisplay();
+};
+
+
+/* =========================
+   REDO
+========================= */
+
+$("redoBtn").onclick = () => {
+
+  if(!redoStack.length)
+    return;
+
+  undoStack.push(current);
+
+  current =
+    redoStack.pop() || "";
+
+  justCalculated = false;
+
+  updateDisplay();
+};
+
+
+/* =========================
+   KEYBOARD
+========================= */
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    // Do not hijack normal typing in inputs/textareas.
+    const target = e.target;
+    if (
+      target &&
+      (target.tagName === "INPUT" ||
+       target.tagName === "TEXTAREA" ||
+       target.isContentEditable)
+    ) {
+      return;
+    }
+
+    const k = e.key;
+
+    if(
+      /^[0-9.]$/.test(k) ||
+      ["+","-","*","/","(",")","^"]
+      .includes(k)
+    ){
+
+      e.preventDefault();
+
+      append(k);
+
+      return;
+    }
+
+
+    if(
+      k === "Enter" ||
+      k === "="
+    ){
+
+      e.preventDefault();
+
+      calculate();
+
+      return;
+    }
+
+
+    if(k === "Backspace"){
+
+      e.preventDefault();
+
+      backspace();
+
+      return;
+    }
+
+
+    if(k === "Escape"){
+
+      e.preventDefault();
+
+      clearAll();
+
+      return;
+    }
+
+  }
+);
+
+
+/* =========================
+   INITIAL SETTINGS
+========================= */
+
+if(
+  localStorage.getItem("novaTheme")
+  === "light"
+){
+
+  $("themeBtn").textContent =
+    "☀️";
+
+  document.body
+    .classList
+    .add("light");
+}
+
+
+setAngle(angleMode);
+
+renderHistory();
+
+updateDisplay();
+
+</script>
+
+<footer class="site-footer">
+  <div>© 2026 NovaCalc Pro · Free Online Scientific Calculator</div>
+  <div><a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy-policy.html">Privacy Policy</a> · <a href="terms.html">Terms</a></div>
+</footer>
+</body>
+</html>
